@@ -41,8 +41,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lexer\LexLexeme.cs" />
+    <Compile Include="LexMicroMachina.cs" />
+    <Compile Include="Lexer\LexTokenizer.cs" />
+    <Compile Include="LexUtils.cs" />
+    <Compile Include="Tokens\CharLexToken.cs" />
+    <Compile Include="Tokens\ILexToken.cs" />
     <Compile Include="LexMachina.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tokens\ILexTokenGenerator.cs" />
+    <Compile Include="Tokens\KeynameLexToken.cs" />
+    <Compile Include="Tokens\NumericLexToken.cs" />
+    <Compile Include="Tokens\SMLexToken.cs" />
+    <Compile Include="Tokens\StringLexToken.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\APCGS.Utils\APCGS.Utils.csproj">
+      <Project>{AF7C9F59-918E-40B8-A59B-25A6FCCBCBB2}</Project>
+      <Name>APCGS.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

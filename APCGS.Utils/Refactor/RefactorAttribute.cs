@@ -35,4 +35,12 @@ namespace APCGS.Utils.Refactor
   /// Redesign - this portion of the code does not fit requirements or simply could be just better for various reasons.
   /// </summary>
   public class RedesignAttribute : RefactorAttribute { }
+  /// <summary>
+  /// Questionable - not necessarily a bad thing, but neither plainly good; used to denote functionality that is either misleading, problematic or cryptic.
+  /// </summary>
+  public class QuestionableAttribute : RefactorAttribute { }
+  /// <summary>
+  /// Needs fix - this portion of the code does not behave as it supposed to, debug/write tests and fix any issues
+  /// </summary>
+  public class NeedsFixAttribute : RefactorAttribute { }
 }
