@@ -27,7 +27,6 @@ bld/
 /APCGS.dev.sln
 
 # Old projects, will be included after additional refactor pass
-APCGS.Utils/
 APCGS.GuiGee/
 APCGS.Patternizr/
 
