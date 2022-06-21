@@ -27,7 +27,6 @@ bld/
 /APCGS.dev.sln
 
 # Old projects, will be included after additional refactor pass
-APCGS.GuiGee/
 APCGS.Patternizr/
 
 # Solution file - excluded for the time being, until the projects above get added to the repo

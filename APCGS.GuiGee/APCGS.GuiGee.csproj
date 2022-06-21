@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B365B11F-6365-467B-9360-81995AC4E3DB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>APCGS.GuiGee</RootNamespace>
+    <AssemblyName>APCGS.GuiGee</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Containers\FlexList.cs" />
+    <Compile Include="Containers\Floater.cs" />
+    <Compile Include="Extensions\GUIDrawerExtension.cs" />
+    <Compile Include="Extensions\GUIFocusExtension.cs" />
+    <Compile Include="Extensions\GUIHoverExtension.cs" />
+    <Compile Include="Extensions\GUIPointerExtension.cs" />
+    <Compile Include="GUIEvent.cs" />
+    <Compile Include="GUIExtension.cs" />
+    <Compile Include="GUIManager.cs" />
+    <Compile Include="GUITarget.cs" />
+    <Compile Include="Measurements\Area.cs" />
+    <Compile Include="Measurements\IPositioning.cs" />
+    <Compile Include="Measurements\Measurement.cs" />
+    <Compile Include="Measurements\MeasurementUnit.cs" />
+    <Compile Include="Measurements\Offset.cs" />
+    <Compile Include="Measurements\Position.cs" />
+    <Compile Include="Measurements\Range.cs" />
+    <Compile Include="Nodes\ComponentNode.cs" />
+    <Compile Include="Nodes\ContainerNode.cs" />
+    <Compile Include="Nodes\EventNode.cs" />
+    <Compile Include="Nodes\Node.cs" />
+    <Compile Include="Nodes\WrapperNode.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\APCGS.Utils\APCGS.Utils.csproj">
+      <Project>{AF7C9F59-918E-40B8-A59B-25A6FCCBCBB2}</Project>
+      <Name>APCGS.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
