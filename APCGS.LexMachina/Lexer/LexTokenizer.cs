@@ -12,6 +12,7 @@ namespace APCGS.LexMachina.Lexer
   /// </summary>
   [WorkInProgress]
   [NeedsDocumentation]
+  [NeedsTests(Reason = "Positioning in UTF-based streams must be checked, especially with token rewinding")]
   public class LexTokenizer
   {
     public struct TokenMatch
@@ -51,22 +52,6 @@ namespace APCGS.LexMachina.Lexer
       Ignore = 4,
       Terminate = 8
     }
-    public enum ECharacterCategory
-    {
-      // 0x00 - 0x21 & 0x7F
-      Whitespace, // space(0x21), VT(0x0B), HT(0x09) 
-      Newline, // CR(0x0D), LF(0x0A), FF(0x0C)
-      Substitute, // SUB(0x1A)
-      Control, // all others in the range & DEL(0x7F)
-      // 0x22+
-      LowercaseLetter, // [a-z]
-      UppercaseLetter, // [A-Z]
-      Letter, // [a-zA-Z]
-      Digit, // [0-9]
-      Alphanumeric, // Letter & Digit
-      Word, // Alphanumeric & [_]
-      Symbol, // !Word >=0x22 && < 0x7F
-    }
 
     [Flags]
     public enum EMode
@@ -79,6 +64,7 @@ namespace APCGS.LexMachina.Lexer
 
       Interleaved = 0x4
     }
+    // NOTE: at current point in time, tokenizer is best created once per source file, so line tracking could be handled exclusively by the tokenizer itself
     public LexTokenizer(EMode mode, long offset = 0, long lineStart = -1, int lineOffset = 0)
     {
       Mode = mode;
@@ -103,8 +89,14 @@ namespace APCGS.LexMachina.Lexer
     public bool IsInterleaved { get => (Mode & EMode.Interleaved) != EMode.None; set => Mode = value ? Mode & ~EMode.Interleaved : Mode | EMode.Interleaved; }
     public Encoding Encoding { get; set; } = Encoding.Unicode;
 
-    private EHandler[] handlerTable = new EHandler[127];
+    private EHandler[] handlerTable = new EHandler[128];
     private bool newline = false;
+
+    public void SetCategoryHandlers(LexUtils.EASCIICategory category, EHandler handler)
+    {
+      foreach(var c in LexUtils.GetASCIICategoryCharacters(category))
+        handlerTable[c] = handler;
+    }
 
     public bool Tokenize(char c)
     {
@@ -114,10 +106,14 @@ namespace APCGS.LexMachina.Lexer
 
       // ignore continuation characters - all unicode glyphs should be represented as single ASCII substitute character
       if (LexUtils.IsContinuation(c, Encoding)) return false;
+      var cat = LexUtils.GetASCIICategory(c);
       // swap non-ASCII chars with substitute char
-      if (c > '\u007f') c = '\u001a';
+      if (cat == LexUtils.EASCIICategory.NotASCII) {
+        c = '\u001a';
+        cat = LexUtils.EASCIICategory.Substitute;
+      }
       // handle newline
-      if (c == '\n' || c == '\r') { if (!newline) newline = true; }
+      if (cat == LexUtils.EASCIICategory.Newline) newline = true;
       else if (newline)
       {
         newline = false;
@@ -156,30 +152,48 @@ namespace APCGS.LexMachina.Lexer
       }
       if (ResultLexemes.Count > 0 && (Mode == EMode.ReturnSet || Mode == EMode.ReturnAll && ActiveTokens.Count == 0)) return true;
       // if tokenization occured in non-interleaved, but ultimately failed to produce any token, return the invalid snippet
-      // POSSIBLE TODO: merge interleaved into EMode
       // POSSIBLE TODO: extend modes, so this functionality is a flag
       if (ActiveTokens.Count == 0 && ResultLexemes.Count == 0 && Signature.Length > 0 && !IsInterleaved)
       {
-        // FIXME
-        //ResultLexemes.AddLast(new TokenMatch { token = null, lexeme = new LexLexeme(Position - Signature.Length, Signature/*, parser*/) });
+        ResultLexemes.AddLast(new LexLexeme(null, Position - Signature.Length, Position, Signature.ToString()));
         return true;
       }
       // check for new tokens
       if (IsInterleaved || ActiveTokens.Count == 0)
       {
-        // FIXME
-        /*
-        List<ILexToken> newPossibleTokens = new List<ILexToken>();
+        List<TokenMatch> newPossibleTokens = new List<TokenMatch>();
         foreach (var token in Tokens)
-          if (token.Advance("", c, 0))
-            newPossibleTokens.Add(token);
+        {
+          // TODO: add global state
+          var match = new TokenMatch { state = token.GetTokenState(), token = token };
+          if (token.Advance(match.state, "", c, 0))
+            newPossibleTokens.Add(match);
+        }
         if (newPossibleTokens.Count > 0)
-          ActiveTokens.Add(Signature.Length, newPossibleTokens);
-        */
+          ActiveTokens.Add(new SignaturePosition(Position,Signature.Length), newPossibleTokens);
+        
       }
 
       Signature.Append(c);
       return false;
+    }
+    public void SetPosition(long position)
+    {
+      Position = position;
+      int i = -1;
+      for (i = 0; i < Lines.Count; i++)
+        if (position < Lines[i]) break;
+      i = i - 1;
+      if (i > 0)
+      {
+        CurrentLine = i + LineOffset;
+        CurrentLineStart = Lines[CurrentLine];
+      }
+      else
+      {
+        CurrentLine = -1;
+        CurrentLineStart = -1;
+      }
     }
     public void Reset()
     {
