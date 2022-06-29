@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lexer\ILexSyntax.cs" />
     <Compile Include="Lexer\LexLexeme.cs" />
     <Compile Include="LexMicroMachina.cs" />
     <Compile Include="Lexer\LexTokenizer.cs" />
